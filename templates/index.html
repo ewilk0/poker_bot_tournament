@@ -87,7 +87,23 @@
       }
     });
 
-    document.getElementById('startButton').addEventListener('click', function() {
+    document.getElementById('startButton').addEventListener('click', async function(event) {
+      const formData = new FormData();
+      formData.append('game_id', 56396);
+      formData.append('big_blind', 2);
+      formData.append('small_blind', 1);
+      formData.append('num_iters', 1000);
+      
+      try {
+        const response = await fetch('/api/startGame', {
+          method: 'POST',
+          body: formData,
+        });
+        const data = await response.json();
+      } catch (error) {
+        console.error('Error uploading file:', error);
+      }
+
       window.location.href = '/poker-table';
     });
   </script>

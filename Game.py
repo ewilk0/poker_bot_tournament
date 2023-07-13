@@ -8,6 +8,8 @@ from treys import Card
 
 class Game:
     def __init__(self, players, starting_stack = 100, bb_value = 2, sb_value = 1, iters = 100):
+        while len(players) < 6:
+            players.append(f'Player{len(players) + 1}')
         self.players = len(players)
         self.player_names = players
         self.current_bets = {i : 0 for i in range(self.players)}
@@ -31,7 +33,7 @@ class Game:
 
         self.busted_players = []
 
-        self.deck = None # start with full 52 cards and pop as used
+        self.deck = Deck() # start with full 52 cards and pop as used
         self.evaluator = Evaluator()
 
         self.player_ids = {i : None for i in range(self.players)}
@@ -53,10 +55,19 @@ class Game:
         # self.manage_game()
     
     def get_players(self):
+        print(self.player_names)
         return self.player_names, [self.player_ids[id].stack for id in range(self.players)]
 
     def get_player_hands_and_bet(self):
-        hands = [[Card.int_to_pretty_str(self.player_ids[id].hand[0]), Card.int_to_pretty_str(self.player_ids[id].hand[1])]  for id in range(self.players)]
+        suit_map = {1 : 's', 2 : 'h', 4 : 'd', 8 : 'c'}
+        hands = []
+        for id in self.player_ids:
+            curr_hand = []
+            for card in self.player_ids[id].hand:
+                rank, suit = Card.print_raw_card(card)
+                curr_hand.append(str(rank) + suit_map[suit])
+            hands.append(curr_hand)
+        
         bets = [self.current_bets[id] for id in range(self.players)]
         for i in range(self.players):
             if i not in self.players_in_hand:
@@ -71,7 +82,12 @@ class Game:
         return bets == 1 or len(self.players_checked) >= len(self.players_in_hand)
 
     def get_board(self):
-        board = [Card.int_to_pretty_str(self.board[card]) for card in range(len(self.board))]
+        board = []
+        suit_map = {1 : 's', 2 : 'h', 4 : 'd', 8 : 'c'}
+        for card in self.board:
+            rank, suit = Card.print_raw_card(card)
+            board.append(str(rank) + suit_map[suit])
+        # board = [Card.int_to_pretty_str(self.board[card]) for card in range(len(self.board))]
         while len(board) < 5:
             board.append('')
         return board
@@ -95,6 +111,7 @@ class Game:
         sum = 0
         for player in self.player_ids.keys():
             res[player] = self.player_ids[player].stack
+            print(self.player_ids[player].stack)
             sum += self.player_ids[player].stack
         assert sum == self.total_equity, 'Sum of stacks not equal to total equity in game'
         return res

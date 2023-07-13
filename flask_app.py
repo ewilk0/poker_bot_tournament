@@ -1,5 +1,5 @@
 import os
-from flask import Flask, flash, request, redirect, render_template
+from flask import Flask, flash, request, redirect, render_template, jsonify
 from flask_cors import CORS
 from Game import Game
 
@@ -39,9 +39,9 @@ def create_lobby():
     python_file.save(os.path.join(app.config['UPLOAD_FOLDER'], python_script_filename))
     
     pre_game_lobby[game_id] = [playerName]
-    game_id += 1
+    # game_id += 1
 
-    return {'code': str(game_id - 1)}
+    return {'code': str(game_id)}
 
 
 @app.route('/api/joinLobby', methods=['POST'])
@@ -74,14 +74,17 @@ def join_lobby():
 
 @app.route('/api/startGame', methods=['POST'])
 def start_lobby():
-    game_to_join_id = request.form.get('game_id')
+    game_to_join_id = int(request.form.get('game_id'))
+    print(game_to_join_id)
     if game_to_join_id not in pre_game_lobby:
         return {'msg': 'no such game exists'}
     big_blind = request.form.get('big_blind')
     small_blind = request.form.get('small_blind')
     num_iters = request.form.get('num_iters')
 
-    active_games[game_id] = Game(pre_game_lobby[game_id], big_blind, small_blind, num_iters)
+    print('STARTING LOBBY')
+    print(game_id)
+    active_games[game_id] = Game(players = pre_game_lobby[game_id], starting_stack = 100, bb_value = int(big_blind), sb_value = int(small_blind), iters = int(num_iters))
 
     return {'msg': 'Game Successfully created'}
 
@@ -89,6 +92,8 @@ def start_lobby():
 @app.route('/api/getPlayers')
 def get_players():
     game_to_play = 56396
+
+    print('INSDE GET PLAYERS')
     
     names, stacks = active_games[game_to_play].get_players()
 

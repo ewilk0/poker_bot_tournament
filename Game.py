@@ -5,13 +5,12 @@ import numpy as np
 from treys import Deck
 from treys import Evaluator
 
-from players import *
-
 class Game:
-    def __init__(self, num_players = 2, starting_stack = 100, bb_value = 1, sb_value = 1, iters = 3):
+    def __init__(self, num_players = 6, starting_stack = 100, bb_value = 1, sb_value = 1, iters = 100):
         self.players = num_players
         self.current_bets = {i : 0 for i in range(self.players)}
         self.players_in_hand = list(range(num_players))
+        self.total_equity = starting_stack*self.players
 
         self.round = 0 # 0 preflop; 1 flop; 2 turn; 3 river
         self.board = []
@@ -22,6 +21,7 @@ class Game:
         self.bb_val = bb_value
         self.sb_val = sb_value
         self.current_bb = 0
+        self.current_sb = 1
 
         self.iter = 0
         self.nit = iters
@@ -31,7 +31,28 @@ class Game:
         self.deck = None # start with full 52 cards and pop as used
         self.evaluator = Evaluator()
 
-        self.player_ids = {} # need a way to generate this automatically from players dir
+        self.player_ids = {i : None for i in range(self.players)}
+        module_names = []
+        # TODO : would like to have a way to dynamically process these players into the Game class
+        for i in range(self.players):
+            if os.path.isfile(f'./players/player{i+1}.py'):
+                module_names.append(f'players.player{i+1}')
+            else:
+                module_names.append(f'bots.player{i+1}')
+        
+        modules = []
+        for module in module_names:
+            modules.append(importlib.import_module(module))
+
+        for i, module in enumerate(list(modules)):
+            self.player_ids[i] = module.Player(starting_stack, i, i)
+
+        '''self.player_ids[0] = player1.Player(starting_stack, 0, 0)
+        self.player_ids[1] = player2.Player(starting_stack, 0, 0)
+        self.player_ids[2] = player3.Player(starting_stack, 0, 0)
+        self.player_ids[3] = player4.Player(starting_stack, 0, 0)
+        self.player_ids[4] = player5.Player(starting_stack, 0, 0)
+        self.player_ids[5] = player6.Player(starting_stack, 0, 0)'''
 
         self.manage_game()
     
@@ -44,28 +65,39 @@ class Game:
         self.pot = 0
 
         self.forced_bet = (False, 0)
-        self.current_bb = 0
 
         self.deck = Deck()
 
     def get_stacks(self):
         res = {}
+        sum = 0
         for player in self.player_ids.keys():
             res[player] = self.player_ids[player].stack
+            sum += self.player_ids[player].stack
+        assert sum == self.total_equity
         return res
     
     def manage_game(self):
         while self.players - len(self.busted_players) > 0 and self.iter < self.nit:
             self.iter += 1
-            print(f'Running iteration {self.iter}')
+            print('\n' + '-'*10 + f'Running iteration {self.iter}' + '-'*10)
             print('Stacks: ' + str(self.get_stacks()))
 
-            for player in self.player_ids.values():
-                if player.stack <= 0:
-                    self.busted_players.append(player)
-                    print('Player busted')
-                    if self.is_game_over():
-                        return
+            self.current_bb = (self.current_bb + 1)%6
+            while self.current_bb in self.busted_players:
+                self.current_bb = (self.current_bb + 1)%6
+            
+            self.current_sb = (self.current_bb + 1)%6
+            while self.current_sb in self.busted_players:
+                self.current_sb = (self.current_sb + 1)%6
+            
+            print(f'Current BB: {self.current_bb}')
+            print(f'Current SB: {self.current_sb}')
+
+            for id, player in self.player_ids.items():
+                if player.stack <= 0 and id not in self.busted_players:
+                    self.busted_players.append(id)
+                    print(f'Player {id} busted')
             
             self.reset_game()
             
@@ -96,6 +128,8 @@ class Game:
 
         for player in self.players_in_hand:
             # TODO: this should really start at the SB
+            if player in self.busted_players:
+                continue
             ret = self.next_action(player)
             if ret == True:
                 return True
@@ -110,7 +144,7 @@ class Game:
                 if strength > best_eval:
                     best_eval = strength
                     winner = player
-            print(f'Player {winner} wins {self.pot} at showdown')
+            print(f'Player {winner} wins {self.pot} at showdown!')
             self.player_ids[winner].stack += self.pot
 
     def manage_round(self):
@@ -122,6 +156,8 @@ class Game:
         
         for player in self.players_in_hand:
             # TODO: this should really start from player to left of the SB
+            if player in self.busted_players:
+                continue
             ret = self.next_action(player)
             if ret == True:
                 return True
@@ -135,8 +171,8 @@ class Game:
         self.current_bets[self.current_bb] = self.bb_val
         self.player_ids[self.current_bb].stack -= self.bb_val
 
-        self.current_bets[(self.current_bb + 1)%6] = self.sb_val
-        self.player_ids[(self.current_bb + 1)%6].stack -= self.sb_val
+        self.current_bets[self.current_sb] = self.sb_val
+        self.player_ids[self.current_sb].stack -= self.sb_val
 
         self.pot += self.bb_val + self.sb_val
 
@@ -160,6 +196,7 @@ class Game:
             self.players_in_hand.remove(player)
             self.current_bets[player] = 0
             print(f'Player {player} folds')
+            return self.is_game_over()
 
         if req[0] == 'FOLD':
             self.players_in_hand.remove(player)

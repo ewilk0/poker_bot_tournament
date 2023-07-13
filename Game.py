@@ -1,9 +1,11 @@
-import numpy as np
+import os
+import importlib
 
+import numpy as np
 from treys import Deck
 from treys import Evaluator
 
-import Player, player1
+from players import *
 
 class Game:
     def __init__(self, num_players = 2, starting_stack = 100, bb_value = 1, sb_value = 1, iters = 3):
@@ -29,11 +31,7 @@ class Game:
         self.deck = None # start with full 52 cards and pop as used
         self.evaluator = Evaluator()
 
-        self.player_ids = {}
-        '''for i in range(num_players):
-            self.player_ids[i] = Player(starting_stack, i, i)'''
-        self.player_ids[0] = Player.Player(starting_stack, 0, 0)
-        self.player_ids[1] = player1.Player(starting_stack, 1, 1)
+        self.player_ids = {} # need a way to generate this automatically from players dir
 
         self.manage_game()
     

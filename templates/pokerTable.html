@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Poker Table</title>
+  <style>
+    body {
+      background-image: url('assets/poker_table.jpg');
+      background-size: cover;
+      background-repeat: no-repeat;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .table {
+      position: relative;
+      width: 800px;
+      height: 600px;
+      background-color: rgba(0, 0, 0, 0.5);
+      border-radius: 10px;
+      padding: 20px;
+    }
+
+    .player {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 150px;
+      text-align: center;
+    }
+
+    .player-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .board {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .board-card {
+      margin-right: 10px;
+    }
+
+    h1, p {
+      color: white;
+      text-shadow: 2px 2px 4px #000000;
+    }
+  </style>
+</head>
+<body>
+  <div class="table">
+    <h1>Poker Table</h1>
+    <div class="players">
+      <!-- Player 1 -->
+      <div class="player" style="top: 20%; left: 50%;">
+        <div class="player-card">
+          <!-- <img id="card1-1" src="assets/back_of_card.png" alt="Card 1">
+          <img id="card1-2" src="assets/back_of_card.png" alt="Card 2"> -->
+          <p id="card1-1"></p>
+          <p id="card1-2"></p>
+        </div>
+        <p id="player1">Loading...</p>
+        <p id="stack1">Stack: Loading...</p>
+      </div>
+      <!-- Player 2 -->
+      <div class="player" style="top: 35%; left: 65%;">
+        <div class="player-card">
+          <!-- <img id="card2-2" src="assets/back_of_card.png" alt="Card 3">
+          <img id="card2-2" src="assets/back_of_card.png" alt="Card 4"> -->
+          <p id="card2-1"></p>
+          <p id="card2-2"></p>
+        </div>
+        <p id="player2">Loading...</p>
+        <p id="stack2">Stack: Loading...</p>
+      </div>
+      <!-- Player 3 -->
+      <div class="player" style="top: 50%; left: 70%;">
+        <div class="player-card">
+          <!-- <img id="card3-2" src="assets/back_of_card.png" alt="Card 5">
+          <img id="card3-2" src="assets/back_of_card.png" alt="Card 6"> -->
+          <p id="card3-1"></p>
+          <p id="card3-2"></p>
+        </div>
+        <p id="player3">Loading...</p>
+        <p id="stack3">Stack: Loading...</p>
+      </div>
+      <!-- Player 4 -->
+      <div class="player" style="top: 65%; left: 65%;">
+        <div class="player-card">
+          <!-- <img id="card4-2" src="assets/back_of_card.png" alt="Card 7">
+          <img id="card4-2" src="assets/back_of_card.png" alt="Card 8"> -->
+          <p id="card4-1"></p>
+          <p id="card4-2"></p>
+        </div>
+        <p id="player4">Loading...</p>
+        <p id="stack4">Stack: Loading...</p>
+      </div>
+      <!-- Player 5 -->
+      <div class="player" style="top: 80%; left: 50%;">
+        <div class="player-card">
+          <!-- <img id="card5-2" src="assets/back_of_card.png" alt="Card 9">
+          <img id="card5-2" src="assets/back_of_card.png" alt="Card 10"> -->
+          <p id="card5-1"></p>
+          <p id="card5-2"></p>
+        </div>
+        <p id="player5">Loading...</p>
+        <p id="stack5">Stack: Loading...</p>
+      </div>
+      <!-- Player 6 -->
+      <div class="player" style="top: 65%; left: 35%;">
+        <div class="player-card">
+          <!-- <img id="card6-2" src="assets/back_of_card.png" alt="Card 11">
+          <img id="card6-2" src="assets/back_of_card.png" alt="Card 12"> -->
+          <p id="card6-1"></p>
+          <p id="card6-2"></p>
+        </div>
+        <p id="player6">Loading...</p>
+        <p id="stack6">Stack: Loading...</p>
+      </div>
+    </div>
+    <div class="board">
+      <div class="board-card">
+        <!-- <img src="assets/back_of_card.png" alt="Board Card 1"> -->
+        <p id="boardcard1"></p>
+      </div>
+      <div class="board-card">
+        <!-- <img src="assets/back_of_card.png" alt="Board Card 2"> -->
+        <p id="boardcard2"></p>
+      </div>
+      <div class="board-card">
+        <!-- <img src="assets/back_of_card.png" alt="Board Card 3"> -->
+        <p id="boardcard3"></p>
+      </div>
+      <div class="board-card">
+        <!-- <img src="assets/back_of_card.png" alt="Board Card 4"> -->
+        <p id="boardcard4"></p>
+      </div>
+      <div class="board-card">
+        <!-- <img src="assets/back_of_card.png" alt="Board Card 5"> -->
+        <p id="boardcard5"></p>
+      </div>
+      <p id="potSize">Pot Size: Loading...</p>
+      <p id="bigBlind">Big Blind: Loading...</p>
+      <p id="smallBlind">Small Blind: Loading...</p>
+    </div>
+  </div>
+
+  <script>
+    // Fetch the player data from the backend
+    fetch('/api/getPlayers', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          game_id: game_id
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        // Update the player name and stack tags with the fetched data
+        data.forEach((playerData, index) => {
+          const playerTag = document.getElementById(`player${index + 1}`);
+          const stackTag = document.getElementById(`stack${index + 1}`);
+          if (playerTag && stackTag) {
+            playerTag.textContent = playerData.name;
+            stackTag.textContent = `Stack: ${playerData.stack}`;
+          }
+        });
+      })
+      .catch(error => console.error('Error fetching players:', error));
+
+    
+    // Function to update the game data
+    function updateGameData() {
+      const game_id = 56396;  // Replace 'your_game_id' with the actual game_id
+
+      fetch('/api/updateGame', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          game_id: game_id
+        })
+      })
+        .then(response => response.json())
+        .then(data => {
+          // Update player cards
+          data.players.forEach((player, index) => {
+            const card1 = document.getElementById(`card${index + 1}-1`);
+            const card2 = document.getElementById(`card${index + 1}-2`);
+            if (card1) {
+              // card1.src = player.hand[0] ? `assets/${player.hand[0]}.svg` : 'assets/back_of_card.png';
+              card1.textContent = player.hand[0];
+            }
+            if (card2) {
+              card2.textConent = player.hand[1];
+            }
+          });
+
+          // Update player stack amounts
+          data.players.forEach((player, index) => {
+            const stack = document.getElementById(`stack${index + 1}`);
+            if (stack) {
+              stack.textContent = `Stack: ${player.stack}`;
+            }
+          });
+
+          // Update player bet amounts
+          data.players.forEach((player, index) => {
+            const bet = document.getElementById(`bet${index + 1}`);
+            if (bet) {
+              bet.textContent = player.bet === 'FOLD' || player.bet === 'BUST' ? player.bet : `Bet: ${player.bet}`;
+            }
+          });
+
+          // Update pot size
+          const potSize = document.getElementById('potSize');
+          if (potSize) {
+            potSize.textContent = `Pot Size: ${data.pot_size}`;
+          }
+
+          // Update blind positions
+          const bigBlind = document.getElementById('bigBlind');
+          const smallBlind = document.getElementById('smallBlind');
+          if (bigBlind && smallBlind) {
+            bigBlind.textContent = `Big Blind: ${data.big_blind}`;
+            smallBlind.textContent = `Small Blind: ${data.small_blind}`;
+          }
+
+          // Update board cards
+          data.board_cards.forEach((card, index) => {
+            const boardCard = document.getElementById(`boardCard${index + 1}`);
+            if (boardCard) {
+              boardCard.textContent = data.board_cards[index]
+              // boardCard.src = card ? `assets/${card}.svg` : 'assets/back_of_card.png';
+            }
+          });
+        })
+        .catch(error => console.error('Error updating game data:', error));
+    }
+
+    // Call the updateGameData function every 2 seconds
+    setInterval(updateGameData, 2000);
+  </script>
+</body>
+</html>

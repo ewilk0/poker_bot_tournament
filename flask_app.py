@@ -66,8 +66,12 @@ def join_lobby():
     python_script_filename = f'{player_id}.py'
     python_file.save(os.path.join(app.config['UPLOAD_FOLDER'], python_script_filename))
     
+    print('ACQU')
+    print(pre_game_lobby)
+    print(game_to_join_id)
     pre_game_lobby[game_to_join_id].append(playerName)
-    game_id += 1
+    print(pre_game_lobby)
+    # game_id += 1
 
     return {'msg': 'Joined game'}
 
@@ -95,6 +99,7 @@ def get_players():
 
     print('INSDE GET PLAYERS')
     
+    print(active_games)
     names, stacks = active_games[game_to_play].get_players()
 
     players = [

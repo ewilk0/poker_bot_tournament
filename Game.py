@@ -64,9 +64,10 @@ class Game:
         for id in self.player_ids:
             curr_hand = []
             for card in self.player_ids[id].hand:
-                rank, suit = Card.print_raw_card(card)
-                curr_hand.append(str(rank) + suit_map[suit])
+                curr_hand.append(Card.int_to_pretty_str(card).strip('[').strip(']'))
             hands.append(curr_hand)
+        
+        print(hands)
         
         bets = [self.current_bets[id] for id in range(self.players)]
         for i in range(self.players):
@@ -85,8 +86,7 @@ class Game:
         board = []
         suit_map = {1 : 's', 2 : 'h', 4 : 'd', 8 : 'c'}
         for card in self.board:
-            rank, suit = Card.print_raw_card(card)
-            board.append(str(rank) + suit_map[suit])
+            board.append(Card.int_to_pretty_str(card).strip('[').strip(']'))
         # board = [Card.int_to_pretty_str(self.board[card]) for card in range(len(self.board))]
         while len(board) < 5:
             board.append('')
@@ -160,6 +160,7 @@ class Game:
             self.reset_game()
     
     def manage_river(self):
+        self.players_checked = set()
         self.forced_bet = (False, 0)
         self.current_bets = {i : 0 for i in range(self.players)}
 
@@ -186,6 +187,7 @@ class Game:
             self.player_ids[winner].stack += self.pot
 
     def manage_round(self):
+        self.players_checked = set()
         self.forced_bet = (False, 0)
         self.current_bets = {i : 0 for i in range(self.players)}
 

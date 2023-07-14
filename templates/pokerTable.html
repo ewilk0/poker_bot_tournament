@@ -4,9 +4,9 @@
   <title style="font-family: Arial">Poker Table</title>
   <style>
     body {
-      /* background-image: url('assets/poker_table.jpg'); 
+      background-image: url('assets/poker_table.jpg'); 
       background-size: cover;
-      background-repeat: no-repeat; */
+      background-repeat: no-repeat;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -17,9 +17,18 @@
       position: relative;
       width: 800px;
       height: 600px;
-      background-color: rgba(0, 0, 0, 0.5);
+      background-color: rgba(25, 102, 34, 1);
       border-radius: 10px;
       padding: 20px;
+    }
+
+    .board {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+      position: relative;
+      top: 250px;
+      left: 80px;
     }
 
     .player {
@@ -37,14 +46,6 @@
       margin-bottom: 10px;
     }
 
-    .board {
-      display: flex;
-      justify-content: center;
-      margin-top: 20px;
-      position: relative;
-      top: 300px;
-    }
-
     .board-card {
       margin-right: 10px;
     }
@@ -57,7 +58,7 @@
 </head>
 <body onload = "updateGameData()">
   <div class="table">
-    <h1 style="font-family: Arial">Poker Table</h1>
+    <h1 style="font-family: Arial">Chicago Texas (Hold'em) Competition</h1>
     <div class="players">
       <!-- Player 1 -->
       <div class="player" style="top: 20%; left: 50%;">
@@ -132,12 +133,10 @@
       <p style="font-family: Arial" id="boardcard3"></p>
       <p style="font-family: Arial" id="boardcard4"></p>
       <p style="font-family: Arial" id="boardcard5"></p>
-      <br></br>
-      <p style="font-family: Arial" id="potSize">Pot Size: Loading...</p> </div><br>
-      <p> </p>
-      <p style="font-family: Arial" id="bigBlind">Big Blind: Loading...</p><br>
-      <p> </p>
-      <p style="font-family: Arial" id="smallBlind">Small Blind: Loading...</p> <br>
+    </div>
+      <p style="font-family: Arial" id="potSize">Pot size: Loading...</p>
+      <p style="font-family: Arial" id="bigBlind">BB Pos: Loading...</p>
+      <p style="font-family: Arial" id="smallBlind">SB Pos: Loading...</p>
     </div>
   </div>
 
@@ -204,24 +203,22 @@
           // Update pot size
           const potSize = document.getElementById('potSize');
           if (potSize) {
-            potSize.textContent = `Pot Size: ${data.pot_size}`;
+            potSize.textContent = `Pot size: ${data.pot_size}`;
           }
 
           // Update blind positions
           const bigBlind = document.getElementById('bigBlind');
           const smallBlind = document.getElementById('smallBlind');
           if (bigBlind && smallBlind) {
-            bigBlind.textContent = `Big Blind: ${data.big_blind}`;
-            smallBlind.textContent = `Small Blind: ${data.small_blind}`;
+            bigBlind.textContent = `BB Pos: ${data.big_blind}`;
+            smallBlind.textContent = `SB Pos: ${data.small_blind}`;
           }
 
           // Update board cards
           data.board_cards.forEach((card, index) => {
             const boardCard = document.getElementById(`boardcard${index + 1}`);
-            console.log(`Board cards`);
-            console.log(data.board_cards);
             if (boardCard) {
-              boardCard.textContent = `${data.board_cards[index]}`;
+              boardCard.textContent = data.board_cards[index];
               // boardCard.src = card ? `assets/${card}.svg` : 'assets/back_of_card.png';
             }
           });
@@ -230,7 +227,7 @@
     }
 
     // Call the updateGameData function every 2 seconds
-    setInterval(updateGameData, 2000);
+    setInterval(updateGameData, 1250);
   </script>
 </body>
 </html>

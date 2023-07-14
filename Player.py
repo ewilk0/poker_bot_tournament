@@ -1,18 +1,18 @@
 from treys import Evaluator
 
 class Player:
-    def __init__(self, stack : int, pos : int, player_id : int):
+    def __init__(self, stack: int, pos: int, player_id: int):
         self.stack = stack
         self.hand = []
         self.position = pos
         self.player_num = player_id
         self.evaluator = Evaluator()
     
-    def update_hand(self, new_hand : list):
+    def update_hand(self, new_hand: list):
         self.hand = new_hand
     
-    def next_move(self, game_state : dict, moves_available : list):
-        '''
+    def next_move(self, game_state: dict, moves_available: list):
+        """
         game_state attributes:
             .players : number of players at the table, busted or not
             .current_bets : current bets on the table
@@ -32,7 +32,7 @@ class Player:
             .nit : total number of iterations in the game
 
             .busted_players : list of players who have busted
-        '''
+        """
         moves_available = [move[0] for move in moves_available]
         if game_state.round >= 1 and self.evaluator.evaluate(game_state.board, self.hand) > 400:
             return ('RAISE', 10)

@@ -11,7 +11,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100vh;
+    /* height: 100vh; */
     margin: 0;
     padding: 20px;
   }
@@ -95,6 +95,39 @@
     .toggle-button.active {
       background-color: rgba(100, 50, 115, 255);
     }
+
+    pre {
+      font-size: 14px;
+      line-height: 1.5;
+      background-color: #ffffff;
+      padding: 10px;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+
+    .keyword {
+      color: #0000ff;
+      font-weight: bold;
+    }
+
+    .class {
+      color: #795548;
+      font-weight: bold;
+    }
+
+    .function {
+      color: #795548;
+    }
+
+    .attribute {
+      color: #006400;
+    }
+
+    .comment {
+      color: #808080;
+      font-style: italic;
+    }
 </style>
 <body>
   <h1 style="font-family: Arial">Chicago Texas (Hold'em) Competition</h1>
@@ -126,6 +159,53 @@
   </form>
   <p id="joinMessage"></p>
   <a href="/poker-table" id="startButton" style="display: none;">Start Game</a>
+
+  <h2>Template code for your AI:</h2>
+  <pre>
+    <span class="keyword">from</span> treys <span class="keyword">import</span> Evaluator
+      
+    <span class="class">class</span> Player:
+        <span class="keyword">def</span> __init__(self, stack: <span class="keyword">int</span>, pos: <span class="keyword">int</span>, player_id: <span class="keyword">int</span>):
+            <span class="keyword">self</span>.stack = stack
+            <span class="keyword">self</span>.hand = []
+            <span class="keyword">self</span>.position = pos
+            <span class="keyword">self</span>.player_num = player_id
+            <span class="keyword">self</span>.evaluator = Evaluator()
+          
+        <span class="keyword">def</span> update_hand(self, new_hand: <span class="keyword">list</span>):
+            <span class="keyword">self</span>.hand = new_hand
+          
+        <span class="keyword">def</span> next_move(self, game_state: <span class="keyword">dict</span>, moves_available: <span class="keyword">list</span>):
+            <span class="comment">"""
+            game_state attributes:
+                .players : number of players at the table, busted or not
+                .current_bets : current bets on the table
+                .players_in_hand : IDs of players currently in the hand
+      
+                .round : 0 preflop; 1 flop; 2 turn; 3 river
+                .board : cards currently on the table
+                .pot : size of pot
+      
+                .forced_bet : 2-tuple of whether a bet must be made and, if so, the amount
+      
+                .bb_val : value of the big blind in this game
+                .sb_val : value of the small blind in this game
+                .current_bb : player who is currently in the big blind position
+      
+                .iter : iteration the game is on
+                .nit : total number of iterations in the game
+      
+                .busted_players : list of players who have busted
+            """
+            </span>
+            moves_available = [move[0] for move in moves_available]
+            <span class="keyword">if</span> game_state.round &gt;= 1 <span class="keyword">and</span> <span class="keyword">self</span>.evaluator.evaluate(game_state.board, <span class="keyword">self</span>.hand) &gt; 400:
+                <span class="keyword">return</span> ('RAISE', 10)
+            <span class="keyword">elif</span> 'CHECK' <span class="keyword">in</span> moves_available:
+                <span class="keyword">return</span> ('CHECK', 0)
+            <span class="keyword">else</span>:
+                <span class="keyword">return</span> ('FOLD', 0)
+  </pre>
 
   <script>
     const joinForm = document.getElementById('joinForm');

@@ -124,8 +124,7 @@ def update_game():
 
     names, stacks = active_games[game_to_play].get_players()
     hands, bets = active_games[game_to_play].get_player_hands_and_bet()
-    big_blind = active_games[game_to_play].current_bb
-    small_blind = active_games[game_to_play].current_sb
+    big_blind, small_blind = active_games[game_to_play].get_bb_and_sb()
     pot = active_games[game_to_play].pot
     board = active_games[game_to_play].get_board()
     round_over = active_games[game_to_play].is_round_over()

@@ -57,6 +57,9 @@ class Game:
     def get_players(self):
         print(self.player_names)
         return self.player_names, [self.player_ids[id].stack for id in range(self.players)]
+    
+    def get_bb_and_sb(self):
+        return self.player_names[self.current_bb], self.player_names[self.current_sb]
 
     def get_player_hands_and_bet(self):
         suit_map = {1 : 's', 2 : 'h', 4 : 'd', 8 : 'c'}
@@ -105,6 +108,7 @@ class Game:
         self.forced_bet = (False, 0)
 
         self.deck = Deck()
+        self.iter += 1
 
     def get_stacks(self):
         res = {}
@@ -121,17 +125,20 @@ class Game:
             print('\n' + '-'*10 + f'Running iteration {self.iter}' + '-'*10)
             print('Stacks: ' + str(self.get_stacks()))
 
+            for id, player in self.player_ids.items():
+                if player.stack <= self.bb_val and id not in self.busted_players:  # If a player has less than bb_val, they can't play
+                    self.busted_players.append(id)
+
             self.current_bb = (self.current_bb + 1)%6
             while self.current_bb in self.busted_players:
                 self.current_bb = (self.current_bb + 1)%6
             
-            self.current_sb = (self.current_sb + 1)%6
+            self.current_sb = (self.current_bb + 1)%6
             while self.current_sb in self.busted_players:
                 self.current_sb = (self.current_sb + 1)%6
 
-            for id, player in self.player_ids.items():
-                if player.stack <= 0 and id not in self.busted_players:
-                    self.busted_players.append(id)
+            if self.current_bb == self.current_sb:
+                print('GAME OVER / ERROR; bb = sb')
 
             # preflop
             round_over = self.manage_round()
@@ -152,11 +159,12 @@ class Game:
             self.round += 1
             if round_over:
                 self.reset_game()
-        else:
+        elif self.round == 3:
             # river
             self.round += 1
             self.board += self.deck.draw(1)
             self.manage_river()
+        else:
             self.reset_game()
     
     def manage_river(self):

@@ -1,12 +1,111 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Python Poker AI</title>
+  <title>Chicago Texas (Hold'em) Competition</title>
 </head>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+    padding: 20px;
+  }
+
+  h1 {
+    color: #824199;
+    font-size: 36px;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  p {
+    color: #555555;
+    font-size: 18px;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  button {
+    padding: 10px 20px;
+    background-color: #824199;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background-color: #552a64;
+  }
+
+  a {
+    color: #ffffff;
+    text-decoration: none;
+    background-color: #824199;
+    padding: 10px 20px;
+    border-radius: 5px;
+    display: inline-block;
+    margin-top: 20px;
+  }
+
+  .button-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    form {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    input[type="file"] {
+      margin-bottom: 10px;
+    }
+
+    input[type="text"] {
+      padding: 10px;
+      width: 250px;
+      border-radius: 5px;
+      border: 1px solid #999999;
+    }
+
+    button[type="submit"] {
+      margin-top: 10px;
+    }
+
+    .toggle-button {
+      padding: 10px 20px;
+      background-color: rgba(130, 65, 153, 255);
+      color: #ffffff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 0 10px;
+    }
+
+    .toggle-button.active {
+      background-color: rgba(100, 50, 115, 255);
+    }
+</style>
 <body>
   <h1 style="font-family: Arial">Chicago Texas (Hold'em) Competition</h1>
-  <p style="font-family: Arial">Upload your Python poker AI!</p>
-  <form action="/api/createLobby" method="POST" enctype="multipart/form-data">
+  <br></br>
+  <div class="button-container">
+    <button id="togglecreateForm" class="toggle-button" type="button" onclick="toggleForm('createForm')">Create Game</button>
+    <button id="togglejoinForm" class="toggle-button" type="button" onclick="toggleForm('joinForm')">Join Game</button>
+  </div>
+  <form id="createForm" action="/api/createLobby" method="POST" enctype="multipart/form-data">
+    <h3 style="font-family: Arial">Create a new game:</h3>
+    <p style="font-family: Arial">Upload your Python poker AI!</p>
     <input type="file" name="script" accept=".py" required>
     <br>
     <input style="font-family: Arial" type="text" name="name" placeholder="Enter your name" required>
@@ -14,7 +113,9 @@
     <button style="font-family: Arial" type="submit" id="createButton">Create Game</button>
   </form>
   <p id="lobbyCode"></p>
-  <form action="/api/joinLobby" method="POST" enctype="multipart/form-data">
+  <form id="joinForm" action="/api/joinLobby" method="POST" enctype="multipart/form-data">
+    <h3 style="font-family: Arial">Join an existing game:</h3>
+    <p style="font-family: Arial">Upload your Python poker AI!</p>
     <input type="file" name="scriptJoin" accept=".py" required>
     <br>
     <input style="font-family: Arial" type="text" name="nameJoin" placeholder="Enter your name" required>
@@ -27,6 +128,46 @@
   <a href="/poker-table" id="startButton" style="display: none;">Start Game</a>
 
   <script>
+    const joinForm = document.getElementById('joinForm');
+    const createForm = document.getElementById('createForm');
+    joinForm.style.display = "none";
+    createForm.style.display = "none";
+
+    function toggleForm(formId) {
+      const form = document.getElementById(formId);
+      const currButton = document.getElementById(`toggle${formId}`);
+      const joinButton = document.getElementById(`togglejoinForm`);
+      const createButton = document.getElementById(`togglecreateForm`);
+      const joinForm = document.getElementById('joinForm');
+      const createForm = document.getElementById('createForm');
+
+      if (form.style.display === "none") {
+        form.style.display = "flex";
+        if (currButton == joinButton) {
+          console.log('join');
+          createForm.style.display = "none";
+          if (!joinButton.classList) {
+            joinButton.classList.add('active');
+          }
+          if (createButton.classList) {
+            createButton.classList.remove('active');
+          }
+        } else {
+          console.log('create');
+          joinForm.style.display = "none";
+          if (!createButton.classList) {
+            createButton.classList.add('active');
+          }
+          if (joinButton.classList) {
+            joinButton.classList.remove('active');
+          }
+        }
+      } else {
+        form.style.display = "none";
+        currButton.classList.remove('active');
+      }
+    }
+
     document.getElementById('joinButton').addEventListener('click', async function(event) {
       event.preventDefault();
       

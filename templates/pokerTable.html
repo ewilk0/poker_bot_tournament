@@ -4,7 +4,7 @@
   <title style="font-family: Arial">Poker Table</title>
   <style>
     body {
-      background-image: url('assets/poker_table.jpg'); 
+      background-image: url(templates/assets/poker_table.jpg);
       background-size: cover;
       background-repeat: no-repeat;
       display: flex;
@@ -15,8 +15,8 @@
 
     .table {
       position: relative;
-      width: 800px;
-      height: 600px;
+      width: 80%;
+      height: 80%;
       background-color: rgba(25, 102, 34, 1);
       border-radius: 10px;
       padding: 20px;
@@ -70,9 +70,10 @@
         <p style="font-family: Arial" id="player1">Loading...</p>
         <p style="font-family: Arial" id="stack1">Stack: Loading...</p>
         <p style="font-family: Arial" id="card1-1"></p>
+        <p style="font-family: Arial" id="bet1">Bet: Loading...</p>
       </div>
       <!-- Player 2 -->
-      <div class="player" style="top: 40%; left: 70%;">
+      <div class="player" style="top: 35%; left: 70%;">
         <!-- <div class="player-card">
           <img id="card2-2" src="assets/back_of_card.png" alt="Card 3">
           <img id="card2-2" src="assets/back_of_card.png" alt="Card 4">
@@ -81,9 +82,10 @@
         <p style="font-family: Arial" id="player2">Loading...</p>
         <p style="font-family: Arial" id="stack2">Stack: Loading...</p>
         <p style="font-family: Arial" id="card2-1"></p>
+        <p style="font-family: Arial" id="bet2">Bet: Loading...</p>
       </div>
       <!-- Player 3 -->
-      <div class="player" style="top: 60%; left: 70%;">
+      <div class="player" style="top: 65%; left: 70%;">
         <!-- <div class="player-card">
           <img id="card3-2" src="assets/back_of_card.png" alt="Card 5">
           <img id="card3-2" src="assets/back_of_card.png" alt="Card 6">
@@ -92,6 +94,7 @@
         <p style="font-family: Arial" id="player3">Loading...</p>
         <p style="font-family: Arial" id="stack3">Stack: Loading...</p>
         <p style="font-family: Arial" id="card3-1"></p>
+        <p style="font-family: Arial" id="bet3">Bet: Loading...</p>
       </div>
       <!-- Player 4 -->
       <div class="player" style="top: 80%; left: 50%;">
@@ -103,9 +106,10 @@
         <p style="font-family: Arial" id="player4">Loading...</p>
         <p style="font-family: Arial" id="stack4">Stack: Loading...</p>
         <p style="font-family: Arial" id="card4-1"></p>
+        <p style="font-family: Arial" id="bet4">Bet: Loading...</p>
       </div>
       <!-- Player 5 -->
-      <div class="player" style="top: 60%; left: 30%;">
+      <div class="player" style="top: 65%; left: 30%;">
         <!-- <div class="player-card">
           <img id="card5-2" src="assets/back_of_card.png" alt="Card 9">
           <img id="card5-2" src="assets/back_of_card.png" alt="Card 10">
@@ -114,9 +118,10 @@
         <p style="font-family: Arial" id="player5">Loading...</p>
         <p style="font-family: Arial" id="stack5">Stack: Loading...</p>
         <p style="font-family: Arial" id="card5-1"></p>
+        <p style="font-family: Arial" id="bet5">Bet: Loading...</p>
       </div>
       <!-- Player 6 -->
-      <div class="player" style="top: 40%; left: 30%;">
+      <div class="player" style="top: 35%; left: 30%;">
         <!-- <div class="player-card">
           <img id="card6-2" src="assets/back_of_card.png" alt="Card 11">
           <img id="card6-2" src="assets/back_of_card.png" alt="Card 12">
@@ -125,6 +130,7 @@
         <p style="font-family: Arial" id="player6">Loading...</p>
         <p style="font-family: Arial" id="stack6">Stack: Loading...</p>
         <p style="font-family: Arial" id="card6-1"></p>
+        <p style="font-family: Arial" id="bet6">Bet: Loading...</p>
       </div>
     </div>
     <div class="board">
@@ -149,7 +155,6 @@
         data.forEach((playerData, index) => {
           const playerTag = document.getElementById(`player${index + 1}`);
           const stackTag = document.getElementById(`stack${index + 1}`);
-          console.log(playerData);
           if (playerTag && stackTag) {
             playerTag.textContent = `${playerData.name}`;
             stackTag.textContent = `Stack: ${playerData.stack}`;
@@ -177,7 +182,6 @@
           // Update player cards
           data.players.forEach((player, index) => {
             const card1 = document.getElementById(`card${index + 1}-1`);
-            console.log(player.hand);
             if (card1) {
               // card1.src = player.hand[0] ? `assets/${player.hand[0]}.svg` : 'assets/back_of_card.png';
               card1.textContent = `${player.hand[0]} ${player.hand[1]}`;
@@ -217,6 +221,9 @@
           // Update board cards
           data.board_cards.forEach((card, index) => {
             const boardCard = document.getElementById(`boardcard${index + 1}`);
+            if (index == 4) {
+              console.log(`boardcard${index + 1} is ${data.board_cards[index]}`);
+            }
             if (boardCard) {
               boardCard.textContent = data.board_cards[index];
               // boardCard.src = card ? `assets/${card}.svg` : 'assets/back_of_card.png';
@@ -226,7 +233,7 @@
         .catch(error => console.error('Error updating game data:', error));
     }
 
-    // Call the updateGameData function every 2 seconds
+    // Call the updateGameData function every 1.25 seconds
     setInterval(updateGameData, 1250);
   </script>
 </body>

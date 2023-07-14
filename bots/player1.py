@@ -34,8 +34,8 @@ class Player:
             .busted_players : list of players who have busted
         '''
         moves_available = [move[0] for move in moves_available]
-        if game_state.round >= 1 and self.evaluator.evaluate(game_state.board, self.hand) > 400 and 'RAISE' in moves_available:
-            return ('RAISE', 10)
+        if game_state.round >= 1 and self.evaluator.evaluate(game_state.board, self.hand) > 600 and 'RAISE' in moves_available:
+            return ('RAISE', 3)
         elif 'CHECK' in moves_available:
             return ('CHECK', 0)
         else:

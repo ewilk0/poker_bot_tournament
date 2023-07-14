@@ -15,7 +15,6 @@ active_games = {}
 pre_game_lobby = {}
 game_id = 56396
 
-
 @app.route('/poker-table')
 def poker_table():
     return render_template('/pokerTable.html')
@@ -43,7 +42,6 @@ def create_lobby():
 
     return {'code': str(game_id)}
 
-
 @app.route('/api/joinLobby', methods=['POST'])
 def join_lobby():
     global game_id
@@ -65,41 +63,26 @@ def join_lobby():
     player_id = f'player{num_players + 1}'
     python_script_filename = f'{player_id}.py'
     python_file.save(os.path.join(app.config['UPLOAD_FOLDER'], python_script_filename))
-    
-    print('ACQU')
-    print(pre_game_lobby)
-    print(game_to_join_id)
-    pre_game_lobby[game_to_join_id].append(playerName)
-    print(pre_game_lobby)
-    # game_id += 1
 
     return {'msg': 'Joined game'}
-
 
 @app.route('/api/startGame', methods=['POST'])
 def start_lobby():
     game_to_join_id = int(request.form.get('game_id'))
-    print(game_to_join_id)
     if game_to_join_id not in pre_game_lobby:
         return {'msg': 'no such game exists'}
     big_blind = request.form.get('big_blind')
     small_blind = request.form.get('small_blind')
     num_iters = request.form.get('num_iters')
 
-    print('STARTING LOBBY')
-    print(game_id)
-    active_games[game_id] = Game(players = pre_game_lobby[game_id], starting_stack = 100, bb_value = int(big_blind), sb_value = int(small_blind), iters = int(num_iters))
+    active_games[game_id] = Game(players = pre_game_lobby[game_id], starting_stack = 200, bb_value = int(big_blind), sb_value = int(small_blind), iters = int(num_iters))
 
     return {'msg': 'Game Successfully created'}
-
 
 @app.route('/api/getPlayers')
 def get_players():
     game_to_play = 56396
-
-    print('INSDE GET PLAYERS')
     
-    print(active_games)
     names, stacks = active_games[game_to_play].get_players()
 
     players = [
@@ -112,8 +95,6 @@ def get_players():
     ]
 
     return jsonify(players)
-
-
 
 @app.route('/api/updateGame', methods=['POST'])
 def update_game():
